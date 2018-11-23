@@ -2,9 +2,12 @@
   "name": "nr-lock",
   "version": "1.0.0",
   "description": "node redis lock",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -20,5 +23,11 @@
   "bugs": {
     "url": "https://github.com/Paul-Long/nr-lock/issues"
   },
-  "homepage": "https://github.com/Paul-Long/nr-lock#readme"
+  "homepage": "https://github.com/Paul-Long/nr-lock#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1"
+  }
 }

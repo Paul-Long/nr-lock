@@ -28,7 +28,7 @@ RedisLock.prototype.startLock = function (callback) {
   }, this.delay);
 };
 
-RedisLock.prototype.lock = function lock(callback) {
+RedisLock.prototype.lock = function (callback) {
   const { clients } = this;
   let waiting = clients.length;
   if (waiting === 0) return false;
@@ -50,7 +50,7 @@ RedisLock.prototype.lock = function lock(callback) {
   });
 };
 
-RedisLock.prototype.unlock = function unlock(callback) {
+RedisLock.prototype.unlock = function (callback) {
   const { clients } = this;
   let waiting = clients.length;
   if (waiting === 0) return false;

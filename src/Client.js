@@ -9,7 +9,7 @@ function Client(opt) {
   this._value = random();
 }
 
-Client.prototype.eval = function eval() {
+Client.prototype.eval = function () {
   return this._redis.eval(...arguments);
 };
 

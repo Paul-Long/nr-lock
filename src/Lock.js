@@ -17,17 +17,17 @@ function Lock(option) {
   };
 }
 
-Lock.prototype.lock = function lock(client, value, ttl, callback) {
+Lock.prototype.lock = (client, value, ttl, callback) => {
   const { scripts, resource } = this;
   client.eval(scripts.lock, 1, resource, value, ttl, this.loop('lock', client, callback));
 };
 
-Lock.prototype.unlock = function unlock(client, value, callback) {
+Lock.prototype.unlock = (client, value, callback) => {
   const { scripts, resource } = this;
   client.eval(scripts.unlock, 1, resource, value, this.loop('unlock', client, callback));
 };
 
-Lock.prototype.extend = function extend(client, value, ttl, callback) {
+Lock.prototype.extend = (client, value, ttl, callback) => {
   const { scripts, resource } = this;
   client.eval(scripts.extend, 1, resource, value, ttl, this.loop('extend', client, callback));
 };

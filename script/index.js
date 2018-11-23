@@ -8,6 +8,9 @@ function RedisLock(clients, opt) {
   this.delay = opt.delay || 1500;
   this._lock = new Lock({ resource: this.resource });
   this._clients = clients;
+  if (!this._clients || this._clients.length === 0) {
+    throw new Error('RedisLock must be instantiated with at least one redis server.');
+  }
   this.interval = null;
   this.clients = (clients || []).map(redis => new Client({ redis, ttl: this.ttl, lock: this._lock }));
 }

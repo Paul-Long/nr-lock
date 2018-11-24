@@ -1,7 +1,11 @@
-const Lock = require('./Lock');
-const Client = require('./Client');
+'use strict';
+
+var Lock = require('./Lock');
+var Client = require('./Client');
 
 function RedisLock(clients, opt) {
+  var _this = this;
+
   opt = opt || {};
   this.resource = opt.resource || 'redis-lock';
   this.ttl = opt.ttl || 3000;
@@ -12,11 +16,13 @@ function RedisLock(clients, opt) {
     throw new Error('RedisLock must be instantiated with at least one redis server.');
   }
   this.interval = null;
-  this.clients = (clients || []).map(redis => new Client({ redis, ttl: this.ttl, lock: this._lock }));
+  this.clients = (clients || []).map(function (redis) {
+    return new Client({ redis: redis, ttl: _this.ttl, lock: _this._lock });
+  });
 }
 
 RedisLock.prototype.startLock = function (callback) {
-  const self = this;
+  var self = this;
   if (this.interval) {
     clearInterval(self.interval);
     self.interval = null;
@@ -29,44 +35,46 @@ RedisLock.prototype.startLock = function (callback) {
 };
 
 RedisLock.prototype.lock = function (callback) {
-  const { clients } = this;
-  let waiting = clients.length;
+  var clients = this.clients;
+
+  var waiting = clients.length;
   if (waiting === 0) return false;
   return new Promise(function (resolve, reject) {
     function loop(err, res, master) {
       if (err) {
         console.error('redislock callback error : %j', err);
-      } else {
-        console.info('redislock callback response : %j', res);
       }
       if (master) {
-        (typeof callback === 'function') && callback(master);
+        typeof callback === 'function' && callback(master);
       }
       if (waiting-- > 1) return;
       return resolve();
     }
 
-    clients.forEach(client => client.lock(loop));
+    clients.forEach(function (client) {
+      return client.lock(loop);
+    });
   });
 };
 
 RedisLock.prototype.unlock = function (callback) {
-  const { clients } = this;
-  let waiting = clients.length;
+  var clients = this.clients;
+
+  var waiting = clients.length;
   if (waiting === 0) return false;
   return new Promise(function (resolve, reject) {
     function loop(err, res) {
       if (err) {
         console.error('redislock unlock callback error : %j', err);
-      } else {
-        console.info('redislock unlock callback response : %j', res);
       }
       if (waiting-- > 1) return;
       callback();
       return resolve();
     }
 
-    clients.forEach(client => client.unlock(loop));
+    clients.forEach(function (client) {
+      return client.unlock(loop);
+    });
   });
 };
 

@@ -1,4 +1,6 @@
-const crypto = require('crypto');
+'use strict';
+
+var crypto = require('crypto');
 
 exports.random = function () {
   return crypto.randomBytes(16).toString('hex');

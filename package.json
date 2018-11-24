@@ -1,11 +1,8 @@
 {
-  "name": "nrd-lock",
-  "version": "1.0.0",
+  "name": "nr-lock",
+  "version": "1.0.1",
   "description": "node redis lock",
-  "main": "lib/index.js",
-  "files": [
-    "lib"
-  ],
+  "main": "index.js",
   "scripts": {
     "build": "babel src -d lib"
   },
@@ -32,5 +29,8 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1"
+  },
+  "dependencies": {
+    "log4js": "^3.0.6"
   }
 }

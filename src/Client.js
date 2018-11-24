@@ -1,4 +1,7 @@
-const { random } = require('./utils');
+'use strict';
+
+var _require = require('./utils'),
+    random = _require.random;
 
 function Client(opt) {
   opt = opt || {};
@@ -10,7 +13,9 @@ function Client(opt) {
 }
 
 Client.prototype.eval = function () {
-  return this._redis.eval(...arguments);
+  var _redis;
+
+  return (_redis = this._redis).eval.apply(_redis, arguments);
 };
 
 Client.prototype.ops = function () {

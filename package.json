@@ -1,5 +1,5 @@
 {
-  "name": "nr-lock",
+  "name": "nrd-lock",
   "version": "1.0.0",
   "description": "node redis lock",
   "main": "lib/index.js",

@@ -17,7 +17,7 @@ $ npm install nr-lock --save-dev
 
 create redis lock
 
-```javascript
+```js
 var Lock = require('nr-lock');
 var lock = new Lock(clients, opt);
 ```
@@ -26,7 +26,7 @@ var lock = new Lock(clients, opt);
 
 clients
 
-```javascript
+```js
 var RedisClient = require('redis').createClient;
 // var RedisClient = require(ioredis);
 var client1 = new RedisClient(redis);
@@ -40,7 +40,7 @@ var clients = [client1, client2];
 
 lock opt
 
-```javascript
+```js
 var opt = {
   resource: 'redis-lock',
   ttl: 5000,            // lock pexpire 5000ms
@@ -52,7 +52,7 @@ var opt = {
 
 - use redis client
 
-```javascript
+```js
 var Lock = require('nr-lock');
 
 var RedisClient = require('redis').createClient;

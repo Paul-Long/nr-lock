@@ -7,18 +7,46 @@ node redis lock
 $ npm install nr-lock --save-dev
 ```
 
-#### Options
+## API
 
-- new Lock(clients, )
+- [new Lock(clients, opt)](#lock)
+  - [clients](#lockclients)
+  - [opt](#lockopt)
 
-- `clients` : redis clients  `Array` 
-- `opt`:   `Object`
+### Lock
 
-         `resource`:  redis key
+create redis lock
 
-         `ttl`:  redis lock pexpire util `ms`
-         
-         `delay`: retry time util `ms`
+```javascript
+var Lock = require('nr-lock');
+var lock = new Lock(clients, opt);
+```
+
+#### lock.clients
+
+clients
+
+```javascript
+var RedisClient = require('redis').createClient;
+// var RedisClient = require(ioredis);
+var client1 = new RedisClient(redis);
+var client2 = new RedisClient(redis);
+
+var clients = [client1, client2];
+```
+
+
+#### lock.opt 
+
+lock opt
+
+```javascript
+var opt = {
+  resource: 'redis-lock',
+  ttl: 5000,            // lock pexpire 5000ms
+  delay: 2000           // retry delay 200ms
+}
+```
 
 #### Usage
 

@@ -1,7 +1,7 @@
 # nr-lock
 node redis lock
 
-#### Install
+## Install
 
 ```bash
 $ npm install nr-lock --save-dev
@@ -11,7 +11,7 @@ $ npm install nr-lock --save-dev
 
 - [API](doc/API.md)
 
-#### How to use
+## How to use
 
 - use redis client
 

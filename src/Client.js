@@ -1,45 +1,51 @@
-'use strict';
+import { random } from './utils';
 
-var _require = require('./utils'),
-    random = _require.random;
+const _redis = Symbol('__redis__');
+const _lock = Symbol('__lock__');
+const _ttl = Symbol('__ttl__');
+const _isMaster = Symbol('__isMaster__');
+const _value = Symbol('__value__');
 
-function Client(opt) {
-  opt = opt || {};
-  this._redis = opt.redis;
-  this._lock = opt.lock;
-  this._ttl = opt.ttl || 3000;
-  this._isMaster = false;
-  this._value = random();
+class Client {
+  constructor(option) {
+    option = option || {};
+    this[ _redis ] = option.redis;
+    this[ _lock ] = option.lock;
+    this[ _ttl ] = option.ttl || 3000;
+    this[ _isMaster ] = false;
+    this[ _value ] = random();
+    this.cmd = this.cmd.bind(this);
+  }
+
+  cmd() {
+    if (!this[ _redis ] || Object.prototype.hasOwnProperty.call(this[ _redis ], 'eval')) {
+      return false;
+    }
+    return this[ _redis ].eval(...arguments);
+  };
+
+  ops = () => {
+    return this.isMaster() ? this[ _redis ] : null;
+  };
+
+  isMaster = () => {
+    return this[ _isMaster ];
+  };
+
+  setMaster = (isMaster) => {
+    this[ _isMaster ] = isMaster;
+  };
+
+  lock = (loop) => {
+    if (this.isMaster()) {
+      return this[ _lock ].extend(this, this[ _value ], this[ _ttl ], loop);
+    }
+    return this[ _lock ].lock(this, this[ _value ], this[ _ttl ], loop);
+  };
+
+  unlock = (loop) => {
+    this[ _lock ].unlock(this, this[ _value ], loop);
+  };
 }
 
-Client.prototype.eval = function () {
-  var _redis;
-
-  return (_redis = this._redis).eval.apply(_redis, arguments);
-};
-
-Client.prototype.ops = function () {
-  return this.isMaster() ? this._redis : null;
-};
-
-Client.prototype.setMaster = function (isMaster) {
-  this._isMaster = isMaster;
-};
-
-Client.prototype.isMaster = function () {
-  return this._isMaster;
-};
-
-Client.prototype.lock = function (loop) {
-  if (this.isMaster()) {
-    this._lock.extend(this, this._value, this._ttl, loop);
-  } else {
-    this._lock.lock(this, this._value, this._ttl, loop);
-  }
-};
-
-Client.prototype.unlock = function (loop) {
-  this._lock.unlock(this, this._value, loop);
-};
-
-module.exports = Client;
+export default Client;

@@ -1,7 +1,5 @@
-'use strict';
+import crypto from 'crypto';
 
-var crypto = require('crypto');
-
-exports.random = function () {
+export function random() {
   return crypto.randomBytes(16).toString('hex');
-};
+}

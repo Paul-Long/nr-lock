@@ -29,9 +29,15 @@ var lock = new Lock([client1, client2], {
   delay: 2000           // retry delay 200ms
 });
 
-lock.startLock(function(master) {
-  console.log(`client1 ${master === client1 ? 'is' : 'not'} master`);
-  console.log(`client2 ${master === client2 ? 'is' : 'not'} master`);
+lock.startLock(function(res) {
+  if (res === 1) {
+    // lock success 
+    const master = lock.master();
+  } else if (res === 0) {
+    // lock failure
+  } else {
+    // error 
+  }
 })
 ```
 
@@ -53,22 +59,27 @@ async function func() {
     delay: 2000           // retry delay 200ms
   });
 
-  const redis = await lock.lock(); //redis client got lock
-  if (redis) {
-    // got lock
+  const res = await lock.lock(); //redis client got lock
+  if (res === 1) {
+    // lock success
+    const master = lock.master();
+  } else if (res === 0) {
+    // lock fail
   } else {
-    // not get lock
+    // error
   }
   
   let retry = false;
   do {
     const has = lock.has(); // result true or false
-    if (has) {
+    if (has === 1) {
       // lock is valid, do something
       retry = true;
-    } else {
+    } else if (has === 0) {
       // lock is failure , do something
       retry = false;
+    } else {
+      // error 
     }
   } while (retry) ;
 }

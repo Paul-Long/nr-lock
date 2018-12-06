@@ -13,7 +13,7 @@ class Client {
     this[ _lock ] = option.lock;
     this[ _ttl ] = option.ttl || 3000;
     this[ _isMaster ] = false;
-    this[ _value ] = random();
+    this[ _value ] = option.value || random();
     this.cmd = this.cmd.bind(this);
   }
 
@@ -44,7 +44,19 @@ class Client {
   };
 
   unlock = (loop) => {
-    this[ _lock ].unlock(this, this[ _value ], loop);
+    if (this.isMaster()) {
+      return this[ _lock ].unlock(this, this[ _value ], loop);
+    }
+  };
+
+  extend = (loop) => {
+    if (this.isMaster()) {
+      return this[ _lock ].extend(this, this[ _value ], this[ _ttl ], loop);
+    }
+  };
+
+  has = (loop) => {
+    this[ _lock ].has(this, this[ _value ], loop);
   };
 }
 

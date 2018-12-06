@@ -1,6 +1,6 @@
 {
   "name": "nr-lock",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "node redis lock",
   "main": "index.js",
   "scripts": {

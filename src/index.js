@@ -15,59 +15,59 @@ const _master = Symbol('__master__');
 class RedisLock {
   constructor(arr, opt) {
     opt = opt || {};
-    this[ resource ] = opt.resource || 'redis-lock';
-    this[ ttl ] = opt.ttl || 3000;
-    this[ delay ] = opt.delay || 1500;
-    this[ _lock ] = new Lock({ resource: this[ resource ] });
-    this[ _clients ] = [];
-    this[ value ] = opt.value || null;
-    this[ _master ] = null;
+    this[resource] = opt.resource || 'redis-lock';
+    this[ttl] = opt.ttl || 3000;
+    this[delay] = opt.delay || 1500;
+    this[_lock] = new Lock({resource: this[resource]});
+    this[_clients] = [];
+    this[value] = opt.value || null;
+    this[_master] = null;
     if (arr instanceof Array) {
-      this[ _clients ] = arr || [];
+      this[_clients] = arr || [];
     } else {
-      this[ _clients ].push(arr);
+      this[_clients].push(arr);
     }
-    if (this[ _clients ].length === 0) {
+    if (this[_clients].length === 0) {
       throw new Error('RedisLock must be instantiated with at least one redis server.');
     }
-    this[ interval ] = null;
-    this[ clients ] = (this[ _clients ] || []).map(redis => this[ createClient ](redis));
+    this[interval] = null;
+    this[clients] = (this[_clients] || []).map((redis) => this[createClient](redis));
   }
 
-  [ createClient ] = (redis) => {
-    return new Client({ redis, ttl: this[ ttl ], lock: this[ _lock ], value: this[ value ] });
+  [createClient] = (redis) => {
+    return new Client({redis, ttl: this[ttl], lock: this[_lock], value: this[value]});
   };
 
   master = () => {
-    return this[ _master ] ? this[ _master ].ops() : null;
+    return this[_master] ? this[_master].ops() : null;
   };
 
   startLock = (callback) => {
-    if (this[ interval ]) {
-      clearInterval(this[ interval ]);
+    if (this[interval]) {
+      clearInterval(this[interval]);
     }
     const _this = this;
     this.lock(callback);
-    this[ interval ] = setInterval(function () {
+    this[interval] = setInterval(function() {
       _this.lock(callback);
-    }, this[ delay ]);
+    }, this[delay]);
   };
 
   lock = (callback) => {
-    const __clients = this[ clients ];
+    const __clients = this[clients];
     let waiting = __clients.length;
     if (waiting === 0) return false;
     let m = null;
     const error = [];
     let success = false;
     const _this = this;
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       function loop(err, res, client) {
         if (err) {
           console.error('redislock callback error : %j', err);
           error.push(err);
         }
-        success = success || (res === 1);
+        success = success || res === 1;
         if (client && res === 1) {
           m = client;
         }
@@ -75,8 +75,8 @@ class RedisLock {
         if (!m) {
           return resolve(0);
         }
-        if (_this[ _master ] !== m) {
-          _this[ _master ] = m;
+        if (_this[_master] !== m) {
+          _this[_master] = m;
           typeof callback === 'function' && callback(success ? 1 : 0);
           if (error.length > 0) return reject(error);
           return resolve(success ? 1 : 0);
@@ -84,7 +84,7 @@ class RedisLock {
       }
 
       try {
-        __clients.forEach(function (client) {
+        __clients.forEach(function(client) {
           return client.lock(loop);
         });
       } catch (e) {
@@ -95,18 +95,18 @@ class RedisLock {
   };
 
   unlock = (callback) => {
-    const __clients = this[ clients ];
+    const __clients = this[clients];
     let waiting = __clients.length;
     if (waiting === 0) return false;
     const error = [];
     let success = false;
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       function loop(err, res, client) {
         if (err) {
           console.error('redislock unlock callback error : %j', err);
-          error.push({ client: client.ops(), error: err });
+          error.push({client: client.ops(), error: err});
         }
-        success = success || (res === 1);
+        success = success || res === 1;
         if (waiting-- > 1) return;
         if (typeof callback === 'function') {
           callback();
@@ -118,7 +118,7 @@ class RedisLock {
       }
 
       try {
-        __clients.forEach(function (client) {
+        __clients.forEach(function(client) {
           return client.unlock(loop);
         });
       } catch (e) {
@@ -129,16 +129,16 @@ class RedisLock {
   };
 
   has = (callback) => {
-    const __clients = this[ clients ];
+    const __clients = this[clients];
     let waiting = __clients.length;
     if (waiting === 0) return false;
     const error = [];
     let _has = false;
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       function loop(err, res, client) {
         if (err) {
           console.error('redislock has callback error : %j', err);
-          error.push({ client: client.ops(), error: err });
+          error.push({client: client.ops(), error: err});
         }
         _has = _has || res === 1;
         if (waiting-- > 1) return;
@@ -152,7 +152,7 @@ class RedisLock {
       }
 
       try {
-        __clients.forEach(function (client) {
+        __clients.forEach(function(client) {
           return client.has(loop);
         });
       } catch (e) {
@@ -163,16 +163,16 @@ class RedisLock {
   };
 
   extend = (callback) => {
-    const __clients = this[ clients ];
+    const __clients = this[clients];
     let waiting = __clients.length;
     if (waiting === 0) return false;
     const error = [];
     let success = false;
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       function loop(err, res, client) {
         if (err) {
           console.error('redislock extend callback error : %j', err);
-          error.push({ client: client.ops(), error: err });
+          error.push({client: client.ops(), error: err});
         }
         success = success || res === 1;
         if (waiting-- > 1) return;
@@ -186,7 +186,7 @@ class RedisLock {
       }
 
       try {
-        __clients.forEach(function (client) {
+        __clients.forEach(function(client) {
           return client.extend(loop);
         });
       } catch (e) {
